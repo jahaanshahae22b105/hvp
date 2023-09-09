@@ -8,11 +8,17 @@ import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import SearchIcon from "@mui/icons-material/Search";
+import { LogoutOutlined } from "@mui/icons-material";
+import { useLogout } from "../../hooks/auth";
 
 const Topbar = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const colorMode = useContext(ColorModeContext);
+
+
+  //Logout Hook
+  const {logout, isLoading} = useLogout();
 
   return (
     <Box display="flex" justifyContent="space-between" p={2}>
@@ -37,14 +43,17 @@ const Topbar = () => {
             <LightModeOutlinedIcon />
           )}
         </IconButton>
-        <IconButton>
+        {/*<IconButton>
           <NotificationsOutlinedIcon />
-        </IconButton>
+          </IconButton>*/}
         <IconButton>
           <SettingsOutlinedIcon />
         </IconButton>
         <IconButton>
           <PersonOutlinedIcon />
+        </IconButton>
+        <IconButton>
+          <LogoutOutlined onClick={logout} isLoading={isLoading}/>
         </IconButton>
       </Box>
     </Box>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Topbar from "./scenes/global/Topbar";
 import Sidebar from "./scenes/global/Sidebar";
 import Dashboard from "./scenes/dashboard";
@@ -19,6 +19,8 @@ import Root from "./scenes/root";
 import Login from "./scenes/login";
 import Register from "./scenes/register";
 import { useAuth } from "./hooks/auth";
+import { LOGIN, REGISTER, CONTACTS, BAR, PIE, LINE, FORM, INVOICES, TEAM, CALENDAR, GEOGRAPHY, DASHBOARD, FAQROUTE } from "./data/routes";
+import { ChakraBaseProvider } from "@chakra-ui/react";
 
 function App() {
 
@@ -27,41 +29,40 @@ function App() {
   const [isSidebar, setIsSidebar] = useState(true);
 
   //check if user is logged in
-  
   const {user, isLoading} = useAuth();
-  const auth = user;
   const {pathname} = useLocation();
-    useEffect(() => {
 
-      
-        
-    }, [pathname, user, isLoading])
 
 
   return (
+
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <div className="app">
-          { auth ? <Sidebar isSidebar={isSidebar} /> : null}
+          { user ? <Sidebar isSidebar={isSidebar} /> : null}
           <main className="content">
-            { auth ? <Topbar setIsSidebar={setIsSidebar} /> : null}
-            <Routes>
-              <Route path="/" element={<Root/>} />
-              <Route path="/login" element={!auth ? <Login/> : <Navigate to="/dashboard"/>} />
-              <Route path="/register" element={!auth ? <Register/> : <Navigate to="/dashboard"/>} />
-              <Route path="/dashboard" element={auth ? <Dashboard/> : <Navigate to="/login"/>} />
-              <Route path="/team" element={auth ? <Team/> : <Navigate to="/login"/>} />
-              <Route path="/contacts" element={auth ? <Contacts/> : <Navigate to="/login"/>} />
-              <Route path="/invoices" element={auth ? <Invoices/> : <Navigate to="/login"/>} />
-              <Route path="/form" element={auth ? <Form/> : <Navigate to="/login"/>} />
-              <Route path="/bar" element={auth ? <Bar/> : <Navigate to="/login"/>} />
-              <Route path="/pie" element={auth ? <Pie/> : <Navigate to="/login"/>} />
-              <Route path="/line" element={auth ? <Line/> : <Navigate to="/login"/>} />
-              <Route path="/faq" element={auth ? <FAQ/> : <Navigate to="/login"/>} />
-              <Route path="/calendar" element={auth ? <Calendar/> : <Navigate to="/login"/>} />
-              <Route path="/geography" element={auth ? <Geography/> : <Navigate to="/login"/>} />
-            </Routes>
+            { user ? <Topbar setIsSidebar={setIsSidebar} /> : null}
+            
+              <Routes>
+                <Route path="/" element={<Root/>} />
+                
+                <Route path={LOGIN} element={!user ? <Login/> : <Navigate to={DASHBOARD}/>} />
+                <Route path={REGISTER} element={!user ? <Register/> : <Navigate to={DASHBOARD}/>} />
+                
+                <Route path={DASHBOARD} element={user ? <Dashboard/> : <Navigate to={LOGIN}/>} />
+                <Route path={TEAM} element={user ? <Team/> : <Navigate to={LOGIN}/>} />
+                <Route path={CONTACTS} element={user ? <Contacts/> : <Navigate to={LOGIN}/>} />
+                <Route path={INVOICES} element={user ? <Invoices/> : <Navigate to={LOGIN}/>} />
+                <Route path={FORM} element={user ? <Form/> : <Navigate to={LOGIN}/>} />
+                <Route path={BAR} element={user ? <Bar/> : <Navigate to={LOGIN}/>} />
+                <Route path={PIE} element={user ? <Pie/> : <Navigate to={LOGIN}/>} />
+                <Route path={LINE} element={user ? <Line/> : <Navigate to={LOGIN}/>} />
+                <Route path={FAQROUTE} element={user ? <FAQ/> : <Navigate to={LOGIN}/>} />
+                <Route path={CALENDAR} element={user ? <Calendar/> : <Navigate to={LOGIN}/>} />
+                <Route path={GEOGRAPHY} element={user ? <Geography/> : <Navigate to={LOGIN}/>} />
+              </Routes>
+            
           </main>
         </div>
       </ThemeProvider>

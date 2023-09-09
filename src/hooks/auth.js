@@ -1,7 +1,5 @@
 
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-
-
 import { useAuthState, useSignOut } from 'react-firebase-hooks/auth';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -11,12 +9,14 @@ import isEmailExists from '../utils/isEmailExists';
 import { mockUser } from '../data/dataSchema';
 import { auth, db, provider } from '../firebase/firebase-config';
 import { DASHBOARD, LOGIN, REGISTER } from '../data/routes';
+import { useToast } from '@chakra-ui/react';
 
 export function useAuth() {
     const [authUser, authLoading, error] = useAuthState(auth);
     const [isLoading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
   
+    //Check for  Users data and get user object
     useEffect(() => {
       async function fetchData() {
         setLoading(true);
@@ -38,34 +38,34 @@ export function useAuth() {
 
 export function useLogin () {
     const [isLoading, setLoading] = useState(false);
-    
+    const toast = useToast();
     const navigate = useNavigate();
 
-    async function login({email, password, redirectTo=DASHBOARD}) 
+    async function login({email, password}) 
     {
         setLoading(true);
 
         try {
             await signInWithEmailAndPassword(auth, email, password);
-           /* toast({
+           toast({
                 title: "Login Successful.",
                 status: "success",
                 isClosable: true,
                 position: "bottom",
                 duration: 3000,
-            });*/
+            });
             console.log("Login Successful");
             navigate(DASHBOARD);
         }
         catch (error) {
-           /* toast({
+           toast({
                 title: "Login Failed.",
                 status: "error",
                 description: error.message,
                 isClosable: true,
                 position: "bottom",
                 duration: 5000,
-            });*/
+            });
             console.log("Login Failed");
             console.log(error.message);
             setLoading(false);
@@ -86,7 +86,7 @@ export function useLogin () {
 
 export function useRegister() {
     const [isLoading, setLoading] = useState(false);
-    
+    const toast = useToast();
     const navigate = useNavigate();
     
   
@@ -97,8 +97,7 @@ export function useRegister() {
       name,
       kaggleID,
       rollNo,
-      phoneNo,
-      redirectTo = DASHBOARD,
+      phoneNo
     }) 
     {
 
@@ -109,25 +108,25 @@ export function useRegister() {
   
       if (usernameExists) 
       {
-        /*toast({
+        toast({
           title: "Username already exists",
           status: "error",
           isClosable: true,
           position: "bottom",
           duration: 3000,
-        });*/
+        });
         console.log("Username already exists");
         setLoading(false);
       } 
       else if (emailExists)
       {
-        /*toast({
+        toast({
             title: "Email already exists",
             status: "error",
             isClosable: true,
             position: "bottom",
             duration: 3000,
-          });*/
+          });
           console.log("Email exists already");
           setLoading(false);
       } 
@@ -149,28 +148,28 @@ export function useRegister() {
           
           await setDoc(doc(db, "users", res.user.uid), newUserData);
   
-          /*toast({
+          toast({
             title: "Account created",
             description: "You are logged in",
             status: "success",
             isClosable: true,
             position: "bottom",
             duration: 3000,
-          });*/
+          });
           console.log("account created");
   
-          navigate(redirectTo);
+          navigate(DASHBOARD);
         } 
         catch (error) 
         {
-          /*toast({
+          toast({
             title: "Signing Up failed",
             description: error.message,
             status: "error",
             isClosable: true,
             position: "bottom",
             duration: 5000,
-          });*/
+          });
           console.log("Signup failed");
         } 
         finally 
@@ -190,19 +189,19 @@ export function useLogout() {
 
     const [signOut, isLoading, error] = useSignOut(auth);
     const navigate = useNavigate();
-   
+    const toast = useToast();
 
     async function logout() {
 
-        if (await signOut())
+        if (await signOut() && !isLoading)
         {
-           /* toast({
+           toast({
                 title: "Logged Out.",
                 status: "success",
                 isClosable: true,
                 position: "bottom",
                 duration: 3000,
-            });*/
+            });
             console.log("logged out");
             navigate(LOGIN);
         }
